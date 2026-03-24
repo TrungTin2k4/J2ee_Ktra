@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Dang ky benh nhan</title>
+</head>
+<body>
+<section layout:fragment="content" class="page-card" style="padding:28px;">
+    <style>
+        .register-shell {
+            display:grid;
+            grid-template-columns:minmax(0, 1fr) minmax(320px, 440px);
+            gap:24px;
+        }
+
+        .register-intro h1 {
+            margin:0;
+            font-family:"Literata", serif;
+            font-size:2.3rem;
+            line-height:1.2;
+        }
+
+        .register-intro p {
+            margin:16px 0 0;
+            color:var(--muted);
+            line-height:1.8;
+            max-width:620px;
+        }
+
+        .register-card {
+            background:#fff;
+            border:1px solid rgba(15,118,110,0.12);
+            border-radius:24px;
+            padding:24px;
+            box-shadow:0 18px 36px rgba(15,23,42,0.06);
+        }
+
+        .register-form {
+            display:grid;
+            gap:16px;
+        }
+
+        .register-field {
+            display:grid;
+            gap:8px;
+        }
+
+        .register-field label {
+            font-weight:700;
+        }
+
+        .register-input {
+            width:100%;
+            padding:14px 16px;
+            border-radius:16px;
+            border:1px solid rgba(15,118,110,0.14);
+            background:#fff;
+            font:inherit;
+        }
+
+        .field-error {
+            color:#b42318;
+            font-size:0.92rem;
+        }
+
+        .register-submit {
+            border:none;
+            border-radius:999px;
+            padding:13px 18px;
+            color:#fff;
+            font-weight:700;
+            background:linear-gradient(135deg, #0f766e, #14b8a6);
+            box-shadow:0 18px 28px rgba(15,118,110,0.18);
+            cursor:pointer;
+        }
+
+        .register-footer {
+            margin-top:14px;
+            color:var(--muted);
+        }
+
+        .register-footer a {
+            color:var(--primary);
+            font-weight:700;
+        }
+
+        @media (max-width:900px) {
+            .register-shell {
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
+
+    <div class="register-shell">
+        <div class="register-intro">
+            <span class="hero-label">Cau 3 - Dang ky PATIENT</span>
+            <h1>Tao tai khoan benh nhan moi voi username, password va email.</h1>
+            <p>Sau khi dang ky thanh cong, he thong luu vao bang `patient` va gan quyen mac dinh la `PATIENT` de benh nhan co the dat lich kham.</p>
+        </div>
+
+        <div class="register-card">
+            <form class="register-form" th:action="@{/register}" th:object="${registrationForm}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="register-field">
+                    <label for="username">Username</label>
+                    <input class="register-input" id="username" type="text" th:field="*{username}" placeholder="Nhap username">
+                    <div class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+                </div>
+
+                <div class="register-field">
+                    <label for="password">Password</label>
+                    <input class="register-input" id="password" type="password" th:field="*{password}" placeholder="Nhap password">
+                    <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="register-field">
+                    <label for="email">Email</label>
+                    <input class="register-input" id="email" type="email" th:field="*{email}" placeholder="Nhap email">
+                    <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                </div>
+
+                <button class="register-submit" type="submit">Dang ky tai khoan</button>
+            </form>
+
+            <div class="register-footer">
+                Da co tai khoan? <a th:href="@{/login}">Dang nhap ngay</a>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

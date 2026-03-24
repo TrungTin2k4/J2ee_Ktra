@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Them bac si</title>
+</head>
+<body>
+<section layout:fragment="content" class="page-card" style="padding:28px;">
+    <style>
+        .doctor-form-shell {
+            display:grid;
+            grid-template-columns:minmax(0, 1.2fr) minmax(280px, 0.8fr);
+            gap:24px;
+        }
+
+        .doctor-form-main h1 {
+            margin:0;
+            font-family:"Literata", serif;
+            font-size:2rem;
+        }
+
+        .doctor-form-main p {
+            margin:10px 0 0;
+            color:var(--muted);
+            line-height:1.8;
+        }
+
+        .doctor-form {
+            margin-top:24px;
+            display:grid;
+            gap:18px;
+        }
+
+        .field-block {
+            display:grid;
+            gap:10px;
+        }
+
+        .field-block label {
+            font-weight:700;
+        }
+
+        .field-input,
+        .field-select,
+        .field-file {
+            width:100%;
+            padding:14px 16px;
+            border-radius:16px;
+            border:1px solid rgba(15,118,110,0.14);
+            background:#fff;
+            color:var(--text);
+            font:inherit;
+        }
+
+        .field-error {
+            color:#b42318;
+            font-size:0.92rem;
+        }
+
+        .form-actions {
+            display:flex;
+            gap:12px;
+            flex-wrap:wrap;
+            margin-top:8px;
+        }
+
+        .primary-action,
+        .secondary-action {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:12px 18px;
+            border-radius:999px;
+            font-weight:700;
+        }
+
+        .primary-action {
+            border:none;
+            background:linear-gradient(135deg, #0f766e, #14b8a6);
+            color:#fff;
+            box-shadow:0 18px 28px rgba(15,118,110,0.18);
+            cursor:pointer;
+        }
+
+        .secondary-action {
+            background:#fff;
+            color:#315565;
+            border:1px solid rgba(15,118,110,0.14);
+        }
+
+        .doctor-preview {
+            padding:22px;
+            border-radius:24px;
+            background:linear-gradient(180deg, #f4fbf9 0%, #ffffff 100%);
+            border:1px solid rgba(15,118,110,0.1);
+            align-self:start;
+        }
+
+        .doctor-preview img {
+            width:100%;
+            max-width:300px;
+            aspect-ratio:1/1;
+            object-fit:cover;
+            border-radius:24px;
+            display:block;
+            margin:0 auto 18px;
+            background:#eef8f5;
+        }
+
+        .doctor-preview h3 {
+            margin:0 0 8px;
+            font-family:"Literata", serif;
+            font-size:1.5rem;
+        }
+
+        .doctor-preview p {
+            margin:0 0 10px;
+            color:var(--muted);
+            line-height:1.7;
+        }
+
+        .preview-chip {
+            display:inline-flex;
+            padding:8px 12px;
+            border-radius:999px;
+            background:#eef8f5;
+            color:#0f766e;
+            font-weight:700;
+            margin-top:4px;
+        }
+
+        @media (max-width:920px) {
+            .doctor-form-shell {
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
+
+    <div class="doctor-form-shell">
+        <div class="doctor-form-main">
+            <h1 th:text="${pageTitle}">Them bac si moi</h1>
+            <p>Nhap day du thong tin bac si, chon khoa va tai len hinh anh neu can. Neu khong tai anh, he thong se gan anh mac dinh.</p>
+
+            <form class="doctor-form" th:action="${formAction}" th:object="${doctor}" method="post" enctype="multipart/form-data">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="field-block">
+                    <label for="name">Ten bac si</label>
+                    <input class="field-input" id="name" type="text" th:field="*{name}" placeholder="VD: BS. Nguyen Minh Anh">
+                    <div class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+
+                <div class="field-block">
+                    <label for="specialty">Chuyen khoa</label>
+                    <input class="field-input" id="specialty" type="text" th:field="*{specialty}" placeholder="VD: Tim mach">
+                    <div class="field-error" th:if="${#fields.hasErrors('specialty')}" th:errors="*{specialty}"></div>
+                </div>
+
+                <div class="field-block">
+                    <label for="departmentId">Khoa</label>
+                    <select class="field-select" id="departmentId" name="departmentId">
+                        <option value="">-- Chon khoa --</option>
+                        <option th:each="department : ${departments}"
+                                th:value="${department.id}"
+                                th:text="${department.name}"
+                                th:selected="${doctor.department != null and department.id == doctor.department.id}">
+                        </option>
+                    </select>
+                    <div class="field-error" th:if="${#fields.hasGlobalErrors()}" th:each="error : ${#fields.globalErrors()}" th:text="${error}"></div>
+                </div>
+
+                <div class="field-block">
+                    <label for="imageFile">Hinh anh</label>
+                    <input class="field-file" id="imageFile" type="file" name="imageFile" accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml">
+                    <div class="field-error" th:if="${imageError != null}" th:text="${imageError}"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="primary-action" th:text="${submitLabel}">Luu bac si</button>
+                    <a class="secondary-action" th:href="@{/admin/doctors}">Quay lai danh sach</a>
+                </div>
+            </form>
+        </div>
+
+        <aside class="doctor-preview">
+            <img th:src="${doctor.image != null ? doctor.image : '/images/doctors/doctor-01.svg'}" th:alt="${doctor.name != null ? doctor.name : 'Doctor preview'}">
+            <h3 th:text="${doctor.name != null and !#strings.isEmpty(doctor.name) ? doctor.name : 'Bac si moi'}">Bac si moi</h3>
+            <p>
+                <strong>Chuyen khoa:</strong>
+                <span th:text="${doctor.specialty != null and !#strings.isEmpty(doctor.specialty) ? doctor.specialty : 'Chua cap nhat'}">Tim mach</span>
+            </p>
+            <p>
+                <strong>Khoa:</strong>
+                <span th:text="${doctor.department != null ? doctor.department.name : 'Chua chon khoa'}">Khoa Noi</span>
+            </p>
+            <span class="preview-chip" th:text="${doctor.id != null ? 'Dang cap nhat du lieu' : 'Dang tao moi'}">Dang tao moi</span>
+        </aside>
+    </div>
+</section>
+</body>
+</html>

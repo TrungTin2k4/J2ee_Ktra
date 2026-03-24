@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" role="img" aria-labelledby="title desc">
+  <title id="title">Doctor portrait 02</title>
+  <desc id="desc">Illustrated doctor portrait placeholder</desc>
+  <defs>
+    <linearGradient id="bg2" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff1d8"/>
+      <stop offset="100%" stop-color="#ffe0a6"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="320" fill="url(#bg2)" rx="36"/>
+  <circle cx="160" cy="116" r="58" fill="#f0bf9c"/>
+  <path d="M98 114c0-41 27-66 62-66 39 0 66 24 68 66-22-17-43-23-68-23-25 0-46 6-62 23z" fill="#5a3424"/>
+  <path d="M80 274c10-53 42-86 80-86 37 0 69 33 80 86" fill="#ffffff"/>
+  <rect x="150" y="207" width="20" height="64" rx="10" fill="#f59e0b"/>
+  <path d="M132 227h56" stroke="#f59e0b" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="102" cy="77" r="18" fill="#ffffff" opacity="0.35"/>
+</svg>

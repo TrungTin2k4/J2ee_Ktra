@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>My Appointments</title>
+</head>
+<body>
+<section layout:fragment="content" class="page-card" style="padding:28px;">
+    <style>
+        .appointment-head {
+            display:flex;
+            align-items:flex-end;
+            justify-content:space-between;
+            gap:18px;
+            flex-wrap:wrap;
+            margin-bottom:24px;
+        }
+
+        .appointment-head h1 {
+            margin:0;
+            font-family:"Literata", serif;
+            font-size:2rem;
+        }
+
+        .appointment-head p {
+            margin:10px 0 0;
+            color:var(--muted);
+            line-height:1.8;
+        }
+
+        .appointment-total {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            min-width:120px;
+            padding:14px 18px;
+            border-radius:22px;
+            background:linear-gradient(135deg, #0f766e, #14b8a6);
+            color:#fff;
+            font-weight:700;
+            box-shadow:0 18px 28px rgba(15,118,110,0.18);
+        }
+
+        .appointment-list {
+            display:grid;
+            gap:18px;
+        }
+
+        .appointment-card {
+            display:grid;
+            grid-template-columns:96px minmax(0, 1fr) auto;
+            gap:18px;
+            align-items:center;
+            padding:18px;
+            border-radius:24px;
+            background:#fff;
+            border:1px solid rgba(15,118,110,0.12);
+            box-shadow:0 18px 36px rgba(15,23,42,0.05);
+        }
+
+        .appointment-card img {
+            width:96px;
+            height:96px;
+            object-fit:cover;
+            border-radius:22px;
+            background:#eef8f5;
+        }
+
+        .appointment-card h3 {
+            margin:0 0 10px;
+            font-size:1.2rem;
+        }
+
+        .appointment-meta {
+            display:flex;
+            gap:18px;
+            flex-wrap:wrap;
+            color:var(--muted);
+        }
+
+        .appointment-date {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:12px 16px;
+            border-radius:18px;
+            background:#eef8f5;
+            color:#0f766e;
+            font-weight:700;
+            text-align:center;
+        }
+
+        .empty-appointments {
+            text-align:center;
+            padding:46px 22px;
+            border-radius:24px;
+            background:#fff;
+            border:1px dashed rgba(15,118,110,0.2);
+            color:var(--muted);
+        }
+
+        .empty-appointments a {
+            display:inline-flex;
+            margin-top:18px;
+            padding:12px 18px;
+            border-radius:999px;
+            background:linear-gradient(135deg, #0f766e, #14b8a6);
+            color:#fff;
+            font-weight:700;
+        }
+
+        @media (max-width:768px) {
+            .appointment-card {
+                grid-template-columns:1fr;
+                text-align:left;
+            }
+
+            .appointment-card img {
+                width:100%;
+                height:auto;
+                aspect-ratio:1 / 1;
+            }
+
+            .appointment-date {
+                justify-self:flex-start;
+            }
+        }
+    </style>
+
+    <div class="appointment-head">
+        <div>
+            <span class="hero-label">Cau 7 - My Appointments</span>
+            <h1>Lich kham cua toi</h1>
+            <p>Trang nay hien thi ten bac si, ngay kham va khoa theo dung yeu cau de bai.</p>
+        </div>
+        <div class="appointment-total" th:text="|${#lists.size(appointments)} lich kham|">0 lich kham</div>
+    </div>
+
+    <div class="empty-appointments" th:if="${#lists.isEmpty(appointments)}">
+        Ban chua co lich kham nao. Hay dat lich voi mot bac si o trang chu.
+        <br>
+        <a th:href="@{/home}">Ve trang chu</a>
+    </div>
+
+    <div class="appointment-list" th:if="${!#lists.isEmpty(appointments)}">
+        <article class="appointment-card" th:each="appointment : ${appointments}">
+            <img th:src="${appointment.doctor.image}" th:alt="${appointment.doctor.name}">
+            <div>
+                <h3 th:text="${appointment.doctor.name}">BS. Nguyen Minh Anh</h3>
+                <div class="appointment-meta">
+                    <span><strong>Khoa:</strong> <span th:text="${appointment.doctor.department.name}">Khoa Noi</span></span>
+                    <span><strong>Chuyen khoa:</strong> <span th:text="${appointment.doctor.specialty}">Tim mach</span></span>
+                </div>
+            </div>
+            <div class="appointment-date" th:text="${#temporals.format(appointment.appointmentDate, 'dd-MM-yyyy')}">24-03-2026</div>
+        </article>
+    </div>
+</section>
+</body>
+</html>

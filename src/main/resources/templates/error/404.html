@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8" />
+    <title>Not found</title>
+</head>
+<body>
+<section layout:fragment="content" class="page-card" style="padding:32px; text-align:center;">
+    <h2 style="margin-top:0; font-family:'Literata', serif;">Khong tim thay trang yeu cau</h2>
+    <p style="color:var(--muted); margin-bottom:24px;">Ban co the quay ve trang chu hoac vao khu vuc quan tri bac si.</p>
+    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a th:href="@{/home}" style="padding:12px 18px; border-radius:999px; background:#0f766e; color:#fff; font-weight:700;">Ve trang chu</a>
+        <a th:href="@{/admin/doctors}" style="padding:12px 18px; border-radius:999px; background:#fff; color:#0f766e; border:1px solid rgba(15,118,110,0.18); font-weight:700;">Quan tri bac si</a>
+    </div>
+</section>
+</body>
+</html>

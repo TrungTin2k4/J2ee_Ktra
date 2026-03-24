@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang chu Clinic</title>
+</head>
+<body>
+<section layout:fragment="content">
+    <style>
+        .home-grid {
+            display: grid;
+            gap: 28px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.85fr);
+            gap: 24px;
+            padding: 28px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: auto -60px -120px auto;
+            width: 260px;
+            height: 260px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.22), transparent 68%);
+        }
+
+        .hero-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-family: "Literata", serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            line-height: 1.15;
+        }
+
+        .hero p {
+            margin: 18px 0 0;
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.8;
+            max-width: 680px;
+        }
+
+        .hero-highlight {
+            display: grid;
+            gap: 16px;
+            align-content: center;
+        }
+
+        .metric-card {
+            padding: 22px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            color: #fff;
+            box-shadow: 0 24px 36px rgba(15, 118, 110, 0.2);
+        }
+
+        .metric-card strong {
+            display: block;
+            font-size: 2.4rem;
+            margin-bottom: 8px;
+        }
+
+        .welcome-card {
+            padding: 20px 22px;
+            border-radius: var(--radius-md);
+            background: #fff7e8;
+            border: 1px solid rgba(245, 158, 11, 0.16);
+            color: #7c5b1d;
+        }
+
+        .alert-box {
+            padding: 16px 18px;
+            border-radius: 18px;
+            font-weight: 600;
+        }
+
+        .alert-box.success {
+            background: #e9fbf4;
+            color: #0f766e;
+            border: 1px solid rgba(15, 118, 110, 0.16);
+        }
+
+        .alert-box.error {
+            background: #fff2f0;
+            color: #b42318;
+            border: 1px solid rgba(180, 35, 24, 0.12);
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .hero-action,
+        .doctor-action,
+        .search-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 999px;
+            padding: 12px 18px;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .hero-action.primary,
+        .doctor-action.primary,
+        .search-button.primary {
+            color: #fff;
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            box-shadow: 0 16px 28px rgba(15, 118, 110, 0.18);
+        }
+
+        .hero-action.secondary,
+        .doctor-action.secondary,
+        .search-button.secondary {
+            color: var(--primary);
+            background: #fff;
+            border: 1px solid rgba(15, 118, 110, 0.14);
+        }
+
+        .doctor-action.secondary.disabled {
+            color: var(--muted);
+            cursor: default;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+        }
+
+        .section-header h2 {
+            margin: 0;
+            font-size: 1.55rem;
+            font-family: "Literata", serif;
+        }
+
+        .section-header p {
+            margin: 8px 0 0;
+            color: var(--muted);
+        }
+
+        .doctor-section {
+            padding: 28px;
+        }
+
+        .search-panel {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            border: 1px solid rgba(15, 118, 110, 0.14);
+            background: #fff;
+            font: inherit;
+            color: var(--text);
+        }
+
+        .search-status {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 18px;
+            min-height: 1.4em;
+        }
+
+        .doctor-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .doctor-card {
+            background: var(--surface-strong);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.06);
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+            animation: riseUp 0.5s ease both;
+        }
+
+        .doctor-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 42px rgba(15, 23, 42, 0.1);
+        }
+
+        .doctor-photo {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            background: #eff7f4;
+        }
+
+        .doctor-content {
+            padding: 18px;
+        }
+
+        .doctor-name {
+            margin: 0 0 12px;
+            font-size: 1.06rem;
+            line-height: 1.5;
+        }
+
+        .doctor-meta {
+            display: grid;
+            gap: 10px;
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        .doctor-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .doctor-action-wrap {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .doctor-note {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 36px 22px;
+            border-radius: var(--radius-md);
+            background: #ffffff;
+            border: 1px dashed rgba(15, 118, 110, 0.24);
+            color: var(--muted);
+        }
+
+        .pagination-wrap {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 28px;
+        }
+
+        .page-link {
+            min-width: 44px;
+            height: 44px;
+            padding: 0 16px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 1px solid rgba(15, 118, 110, 0.14);
+            color: var(--muted);
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .page-link:hover,
+        .page-link.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            border-color: transparent;
+            box-shadow: 0 16px 28px rgba(15, 118, 110, 0.18);
+        }
+
+        .page-link.disabled {
+            pointer-events: none;
+            opacity: 0.45;
+        }
+
+        @keyframes riseUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1100px) {
+            .doctor-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .doctor-section,
+            .hero {
+                padding: 22px;
+            }
+
+            .doctor-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .search-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .doctor-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <div class="home-grid">
+        <div class="alert-box success" th:if="${successMessage != null}" th:text="${successMessage}"></div>
+        <div class="alert-box error" th:if="${errorMessage != null}" th:text="${errorMessage}"></div>
+
+        <section class="page-card hero">
+            <div>
+                <span class="hero-label">Cau 1, 6, 8, 10</span>
+                <h1 th:text="${homeTitle}">Dat lich kham nhanh cung doi ngu bac si chuyen mon cao</h1>
+                <p>
+                    Trang home hien thi danh sach bac si, phan trang 5 bac si moi trang,
+                    ho tro dat lich cho PATIENT va tim kiem bac si theo ten.
+                </p>
+                <p>
+                    Chuc nang tim kiem su dung Ajax de cap nhat ket qua ngay tren trang ma khong can reload.
+                </p>
+                <div class="hero-actions">
+                    <a class="hero-action primary" th:if="${!isAuthenticated}" th:href="@{/register}">Dang ky tai khoan</a>
+                    <a class="hero-action secondary" th:if="${!isAuthenticated}" th:href="@{/login}">Dang nhap</a>
+                    <a class="hero-action primary" th:if="${isPatient}" th:href="@{/my-appointments}">My Appointments</a>
+                    <a class="hero-action secondary" th:if="${isAdmin}" th:href="@{/admin/doctors}">Quan tri bac si</a>
+                    <a class="hero-action secondary" th:if="${googleLoginEnabled and !isAuthenticated}" th:href="@{/oauth2/authorization/google}">Google Login</a>
+                </div>
+            </div>
+
+            <div class="hero-highlight">
+                <div class="metric-card">
+                    <strong th:text="${doctorPage.totalElements}">10</strong>
+                    <span>Bac si dang san sang phuc vu lich kham.</span>
+                </div>
+                <div class="welcome-card" th:if="${principalName != null}">
+                    Xin chao <strong th:text="${principalName}">user</strong>, ban da dang nhap thanh cong va dang o trang /home.
+                </div>
+                <div class="welcome-card" th:if="${principalName == null}">
+                    Ban co the xem danh sach bac si ngay tai trang chu va dang nhap sau khi can dat lich.
+                </div>
+            </div>
+        </section>
+
+        <section class="page-card doctor-section">
+            <div class="section-header">
+                <div>
+                    <h2>Danh sach bac si</h2>
+                    <p>Nhap ten bac si de tim nhanh, ket qua cap nhat ngay ma khong reload trang.</p>
+                </div>
+                <div>
+                    <span class="hero-label">Trang <span th:text="${currentPage}">1</span>/<span th:text="${totalPages == 0 ? 1 : totalPages}">2</span></span>
+                </div>
+            </div>
+
+            <div class="search-panel">
+                <input id="doctorSearchInput" class="search-input" type="search" placeholder="Tim kiem theo ten bac si...">
+                <button id="clearSearchButton" class="search-button secondary" type="button">Xoa tim kiem</button>
+            </div>
+            <div id="searchStatus" class="search-status">Tat ca bac si dang duoc hien thi theo phan trang mac dinh.</div>
+
+            <div id="doctorGrid" class="doctor-grid" th:if="${!#lists.isEmpty(doctors)}">
+                <article class="doctor-card" th:each="doctor, iterStat : ${doctors}" th:style="|animation-delay:${iterStat.index * 0.08}s|">
+                    <img class="doctor-photo" th:src="${doctor.image}" th:alt="${doctor.name}">
+                    <div class="doctor-content">
+                        <h3 class="doctor-name" th:text="${doctor.name}">BS. Nguyen Minh Anh</h3>
+                        <div class="doctor-meta">
+                            <span><strong>Chuyen khoa:</strong> <span th:text="${doctor.specialty}">Tim mach</span></span>
+                            <span><strong>Khoa:</strong> <span th:text="${doctor.department.name}">Khoa Noi</span></span>
+                        </div>
+                        <div class="doctor-action-wrap">
+                            <a class="doctor-action primary" th:if="${isPatient}" th:href="@{/enroll/doctors/{id}(id=${doctor.id})}">Dat lich</a>
+                            <a class="doctor-action secondary" th:if="${!isAuthenticated}" th:href="@{/login}">Dang nhap de dat</a>
+                            <span class="doctor-action secondary disabled" th:if="${isAdmin}">Chi PATIENT duoc dat</span>
+                        </div>
+                        <p class="doctor-note" th:if="${isPatient}">Ban se chon ngay kham o buoc tiep theo.</p>
+                        <p class="doctor-note" th:if="${!isAuthenticated}">Dang nhap hoac dang ky de su dung chuc nang dat lich.</p>
+                        <p class="doctor-note" th:if="${isAdmin}">ADMIN co the quan tri CRUD bac si trong khu vuc rieng.</p>
+                    </div>
+                </article>
+            </div>
+
+            <div id="emptyState" class="empty-state" th:if="${#lists.isEmpty(doctors)}">
+                Chua co du lieu bac si. He thong se tao bang va du lieu mau khi ung dung khoi dong.
+            </div>
+
+            <div id="paginationWrap" class="pagination-wrap" th:if="${totalPages > 1}">
+                <a class="page-link"
+                   th:classappend="${doctorPage.first} ? ' disabled' : ''"
+                   th:href="@{/home(page=${doctorPage.number - 1})}">Truoc</a>
+
+                <a class="page-link"
+                   th:each="pageNumber : ${#numbers.sequence(1, totalPages)}"
+                   th:classappend="${pageNumber == currentPage} ? ' active' : ''"
+                   th:href="@{/home(page=${pageNumber - 1})}"
+                   th:text="${pageNumber}">1</a>
+
+                <a class="page-link"
+                   th:classappend="${doctorPage.last} ? ' disabled' : ''"
+                   th:href="@{/home(page=${doctorPage.number + 1})}">Sau</a>
+            </div>
+        </section>
+    </div>
+
+    <script th:inline="javascript">
+        const homeState = {
+            isAuthenticated: [[${isAuthenticated}]],
+            isPatient: [[${isPatient}]],
+            isAdmin: [[${isAdmin}]]
+        };
+
+        const searchInput = document.getElementById('doctorSearchInput');
+        const clearSearchButton = document.getElementById('clearSearchButton');
+        const searchStatus = document.getElementById('searchStatus');
+        const doctorGrid = document.getElementById('doctorGrid');
+        const emptyState = document.getElementById('emptyState');
+        const paginationWrap = document.getElementById('paginationWrap');
+
+        const defaultDoctorGridMarkup = doctorGrid ? doctorGrid.innerHTML : '';
+        const defaultEmptyStateDisplay = emptyState ? emptyState.style.display : '';
+
+        const debounce = (callback, delay) => {
+            let timeoutId;
+            return (...args) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => callback(...args), delay);
+            };
+        };
+
+        const escapeHtml = (value) => String(value ?? '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+
+        const buildActionMarkup = (doctorId) => {
+            if (homeState.isPatient) {
+                return `<a class="doctor-action primary" href="/enroll/doctors/${doctorId}">Dat lich</a>`;
+            }
+            if (!homeState.isAuthenticated) {
+                return `<a class="doctor-action secondary" href="/login">Dang nhap de dat</a>`;
+            }
+            if (homeState.isAdmin) {
+                return `<span class="doctor-action secondary disabled">Chi PATIENT duoc dat</span>`;
+            }
+            return '';
+        };
+
+        const buildNoteMarkup = () => {
+            if (homeState.isPatient) {
+                return '<p class="doctor-note">Ban se chon ngay kham o buoc tiep theo.</p>';
+            }
+            if (!homeState.isAuthenticated) {
+                return '<p class="doctor-note">Dang nhap hoac dang ky de su dung chuc nang dat lich.</p>';
+            }
+            if (homeState.isAdmin) {
+                return '<p class="doctor-note">ADMIN co the quan tri CRUD bac si trong khu vuc rieng.</p>';
+            }
+            return '';
+        };
+
+        const renderDoctors = (doctors) => {
+            if (!doctorGrid) {
+                return;
+            }
+
+            if (!doctors.length) {
+                doctorGrid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Khong tim thay bac si nao phu hop voi tu khoa ban nhap.</div>';
+                return;
+            }
+
+            doctorGrid.innerHTML = doctors.map((doctor, index) => `
+                <article class="doctor-card" style="animation-delay:${index * 0.08}s;">
+                    <img class="doctor-photo" src="${escapeHtml(doctor.image)}" alt="${escapeHtml(doctor.name)}">
+                    <div class="doctor-content">
+                        <h3 class="doctor-name">${escapeHtml(doctor.name)}</h3>
+                        <div class="doctor-meta">
+                            <span><strong>Chuyen khoa:</strong> <span>${escapeHtml(doctor.specialty)}</span></span>
+                            <span><strong>Khoa:</strong> <span>${escapeHtml(doctor.departmentName)}</span></span>
+                        </div>
+                        <div class="doctor-action-wrap">${buildActionMarkup(doctor.id)}</div>
+                        ${buildNoteMarkup()}
+                    </div>
+                </article>
+            `).join('');
+        };
+
+        const restoreDefaultView = () => {
+            if (doctorGrid) {
+                doctorGrid.innerHTML = defaultDoctorGridMarkup;
+            }
+            if (paginationWrap) {
+                paginationWrap.style.display = '';
+            }
+            if (emptyState) {
+                emptyState.style.display = defaultEmptyStateDisplay;
+            }
+            searchStatus.textContent = 'Tat ca bac si dang duoc hien thi theo phan trang mac dinh.';
+        };
+
+        const performSearch = debounce(async () => {
+            const keyword = searchInput.value.trim();
+
+            if (!keyword) {
+                restoreDefaultView();
+                return;
+            }
+
+            searchStatus.textContent = `Dang tim bac si theo ten: "${keyword}"...`;
+            if (paginationWrap) {
+                paginationWrap.style.display = 'none';
+            }
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            try {
+                const response = await fetch(`/api/doctors/search?keyword=${encodeURIComponent(keyword)}`);
+                if (!response.ok) {
+                    throw new Error('Search failed');
+                }
+                const doctors = await response.json();
+                renderDoctors(doctors);
+                searchStatus.textContent = doctors.length
+                    ? `Tim thay ${doctors.length} bac si phu hop voi tu khoa "${keyword}".`
+                    : `Khong tim thay bac si nao phu hop voi tu khoa "${keyword}".`;
+            } catch (error) {
+                searchStatus.textContent = 'Khong the tim kiem luc nay. Vui long thu lai.';
+            }
+        }, 300);
+
+        if (searchInput) {
+            searchInput.addEventListener('input', performSearch);
+        }
+
+        if (clearSearchButton) {
+            clearSearchButton.addEventListener('click', () => {
+                searchInput.value = '';
+                restoreDefaultView();
+                searchInput.focus();
+            });
+        }
+    </script>
+</section>
+</body>
+</html>

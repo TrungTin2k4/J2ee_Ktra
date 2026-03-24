@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Dang nhap</title>
+</head>
+<body>
+<section layout:fragment="content" class="page-card" style="padding:28px;">
+    <style>
+        .auth-shell {
+            display:grid;
+            grid-template-columns:minmax(0, 1fr) minmax(320px, 420px);
+            gap:24px;
+            align-items:stretch;
+        }
+
+        .auth-intro {
+            padding:10px 4px;
+        }
+
+        .auth-intro h1 {
+            margin:0;
+            font-family:"Literata", serif;
+            font-size:2.3rem;
+            line-height:1.2;
+        }
+
+        .auth-intro p {
+            margin:16px 0 0;
+            color:var(--muted);
+            line-height:1.8;
+            max-width:640px;
+        }
+
+        .auth-card {
+            background:#fff;
+            border:1px solid rgba(15,118,110,0.12);
+            border-radius:24px;
+            padding:24px;
+            box-shadow:0 18px 36px rgba(15,23,42,0.06);
+        }
+
+        .auth-card h2 {
+            margin:0 0 18px;
+            font-size:1.4rem;
+        }
+
+        .auth-alert {
+            padding:14px 16px;
+            border-radius:16px;
+            margin-bottom:16px;
+            font-weight:600;
+        }
+
+        .auth-alert.error {
+            background:#fff2f0;
+            color:#b42318;
+        }
+
+        .auth-alert.success {
+            background:#e9fbf4;
+            color:#0f766e;
+        }
+
+        .auth-form {
+            display:grid;
+            gap:16px;
+        }
+
+        .auth-field {
+            display:grid;
+            gap:8px;
+        }
+
+        .auth-field label {
+            font-weight:700;
+        }
+
+        .auth-input {
+            width:100%;
+            padding:14px 16px;
+            border-radius:16px;
+            border:1px solid rgba(15,118,110,0.14);
+            background:#fff;
+            font:inherit;
+        }
+
+        .auth-submit {
+            border:none;
+            border-radius:999px;
+            padding:13px 18px;
+            color:#fff;
+            font-weight:700;
+            background:linear-gradient(135deg, #0f766e, #14b8a6);
+            box-shadow:0 18px 28px rgba(15,118,110,0.18);
+            cursor:pointer;
+        }
+
+        .auth-links {
+            margin-top:16px;
+            color:var(--muted);
+        }
+
+        .auth-links a {
+            color:var(--primary);
+            font-weight:700;
+        }
+
+        .oauth-divider {
+            display:flex;
+            align-items:center;
+            gap:12px;
+            margin:18px 0;
+            color:var(--muted);
+            font-size:0.92rem;
+        }
+
+        .oauth-divider::before,
+        .oauth-divider::after {
+            content:"";
+            flex:1;
+            height:1px;
+            background:rgba(15,118,110,0.14);
+        }
+
+        .google-button {
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            width:100%;
+            border-radius:999px;
+            padding:13px 18px;
+            font-weight:700;
+            color:#1f2a37;
+            background:#ffffff;
+            border:1px solid rgba(15,118,110,0.14);
+            box-shadow:0 14px 24px rgba(15,23,42,0.05);
+        }
+
+        .google-note {
+            margin-top:12px;
+            color:var(--muted);
+            font-size:0.92rem;
+            line-height:1.7;
+        }
+
+        @media (max-width:900px) {
+            .auth-shell {
+                grid-template-columns:1fr;
+            }
+        }
+    </style>
+
+    <div class="auth-shell">
+        <div class="auth-intro">
+            <span class="hero-label">Cau 5 - Login</span>
+            <h1>Dang nhap bang username va password, sau do chuyen ve `/home`.</h1>
+            <p>Ban co the dang nhap voi tai khoan ADMIN hoac PATIENT. Tai khoan mau: `admin / admin123` va `patient / 123456`.</p>
+        </div>
+
+        <div class="auth-card">
+            <h2>Dang nhap he thong</h2>
+
+            <div class="auth-alert error" th:if="${loginError}">Sai username hoac password.</div>
+            <div class="auth-alert success" th:if="${logoutSuccess}">Ban da dang xuat thanh cong.</div>
+            <div class="auth-alert success" th:if="${registeredSuccess}">Dang ky thanh cong. Ban hay dang nhap de dat lich.</div>
+
+            <form class="auth-form" th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+
+                <div class="auth-field">
+                    <label for="username">Username</label>
+                    <input class="auth-input" id="username" name="username" type="text" placeholder="Nhap username">
+                </div>
+
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input class="auth-input" id="password" name="password" type="password" placeholder="Nhap password">
+                </div>
+
+                <button class="auth-submit" type="submit">Dang nhap</button>
+            </form>
+
+            <div class="oauth-divider" th:if="${googleLoginEnabled}">hoac</div>
+            <a class="google-button" th:if="${googleLoginEnabled}" th:href="@{/oauth2/authorization/google}">
+                <span>G</span>
+                <span>Dang nhap voi Google</span>
+            </a>
+            <p class="google-note" th:if="${!googleLoginEnabled}">
+                Google OAuth2 da duoc tich hop san. Chi can them `GOOGLE_CLIENT_ID` va `GOOGLE_CLIENT_SECRET` de bat nut dang nhap Google.
+            </p>
+
+            <div class="auth-links">
+                Chua co tai khoan? <a th:href="@{/register}">Dang ky PATIENT</a>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

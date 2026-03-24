@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Clinic Appointment Application</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Literata:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f4f8f6;
+            --surface: rgba(255, 255, 255, 0.88);
+            --surface-strong: #ffffff;
+            --text: #1f2a37;
+            --muted: #5f6f7f;
+            --primary: #0f766e;
+            --primary-soft: #dff5f2;
+            --accent: #f59e0b;
+            --border: rgba(15, 118, 110, 0.12);
+            --shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Be Vietnam Pro", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 32%),
+                radial-gradient(circle at top right, rgba(245, 158, 11, 0.18), transparent 26%),
+                linear-gradient(180deg, #f8fcfb 0%, var(--bg) 42%, #edf5f2 100%);
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .site-shell {
+            width: min(1180px, calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: blur(14px);
+            background: rgba(244, 248, 246, 0.78);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        .site-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 18px 0;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            font-size: 1.2rem;
+            background: linear-gradient(135deg, #0f766e, #14b8a6);
+            color: #fff;
+            box-shadow: 0 14px 30px rgba(15, 118, 110, 0.26);
+        }
+
+        .brand-title {
+            display: block;
+            font-family: "Literata", serif;
+            font-size: 1.2rem;
+        }
+
+        .brand-subtitle {
+            display: block;
+            color: var(--muted);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .site-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-user {
+            color: var(--muted);
+            font-weight: 700;
+            padding: 10px 6px;
+        }
+
+        .nav-link {
+            padding: 10px 16px;
+            border-radius: 999px;
+            color: var(--muted);
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(15, 118, 110, 0.1);
+            color: var(--primary);
+        }
+
+        .nav-link.cta {
+            background: linear-gradient(135deg, #0f766e, #0ea5a1);
+            color: #fff;
+            box-shadow: 0 18px 30px rgba(15, 118, 110, 0.18);
+        }
+
+        .nav-button {
+            font: inherit;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .page-content {
+            padding: 42px 0 30px;
+        }
+
+        .page-card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+        }
+
+        .site-footer {
+            padding: 16px 0 36px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .site-header-inner {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .site-nav {
+                justify-content: space-between;
+            }
+
+            .page-content {
+                padding-top: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="site-shell site-header-inner">
+            <a class="brand" th:href="@{/home}">
+                <span class="brand-mark">+</span>
+                <span>
+                    <span class="brand-title">MediCare Clinic</span>
+                    <span class="brand-subtitle">Clinic Appointment Application</span>
+                </span>
+            </a>
+            <nav class="site-nav">
+                <a class="nav-link active" th:href="@{/home}">Trang chu</a>
+                <a class="nav-link" th:href="@{/courses}">Courses</a>
+                <a class="nav-link" th:if="${isPatient}" th:href="@{/my-appointments}">My Appointments</a>
+                <a class="nav-link" th:if="${isAdmin}" th:href="@{/admin/doctors}">Quan tri bac si</a>
+                <a class="nav-link" th:if="${!isAuthenticated}" th:href="@{/register}">Dang ky</a>
+                <span class="nav-user" th:if="${isAuthenticated}" th:text="|Xin chao, ${currentUsername}|">Xin chao</span>
+                <a class="nav-link cta" th:if="${!isAuthenticated}" th:href="@{/login}">Dang nhap</a>
+                <form class="logout-form" th:if="${isAuthenticated}" th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                    <button type="submit" class="nav-link cta nav-button">Dang xuat</button>
+                </form>
+            </nav>
+        </div>
+    </header>
+
+    <main class="site-shell page-content">
+        <div layout:fragment="content"></div>
+    </main>
+
+    <footer class="site-shell site-footer">
+        <p>Clinic Appointment Application - Trang home hien thi danh sach bac si va phan trang.</p>
+    </footer>
+</body>
+</html>
